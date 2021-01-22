@@ -17,8 +17,6 @@ class DisposableActions
 
     public function getPrice(array $options): array
     {
-        $result = [];
-
         $country = $options["country"];
         $service = $options["service"];
 
@@ -34,27 +32,34 @@ class DisposableActions
         $res = HttpClient::request("disposable/price", $data);
 
         if (!isset($res["status"], $res["data"])) {
-            return $result;
-        }
-        if ($res["status"] === "success") {
-            $resCountry = $res["data"]["country"];
-            $resService = $res["data"]["service"];
-            $price = $res["data"]["phone"]["price"];
-
-            $result = array(
-                "status" => true,
-                "country" => $resCountry,
-                "service" => $resService,
-                "price" => $price
+            return array(
+                "status" => false,
+                "error_type" => $res["error_type"],
+                "content" => $res["content"]
             );
         }
-        return $result;
+        if ($res["status"] === "error") {
+            return array(
+                "status" => false,
+                "error_type" => $res["error_type"],
+                "content" => $res["content"]
+            );
+        }
+
+        $resCountry = $res["data"]["country"];
+        $resService = $res["data"]["service"];
+        $price = $res["data"]["phone"]["price"];
+
+        return array(
+            "status" => true,
+            "country" => $resCountry,
+            "service" => $resService,
+            "price" => $price
+        );
     }
 
     public function order(array $options): array
     {
-        $result = [];
-
         $country = $options["country"];
         $service = $options["service"];
 
@@ -70,29 +75,36 @@ class DisposableActions
         $res = HttpClient::request("disposable", $data, "POST");
 
         if (!isset($res["status"], $res["data"])) {
-            return $result;
-        }
-        if ($res["status"] === "success") {
-            $oldBalance = $res["data"]["old_balance"]; // float
-            $newBalance = $res["data"]["new_balance"]; // float
-            $number = $res["data"]["phone"]["number"]; // string
-            $numberID = $res["data"]["phone"]["id"]; // string
-
-            $result = array(
-                "status" => true,
-                "oldBalance" => $oldBalance,
-                "newBalance" => $newBalance,
-                "number" => $number,
-                "numberID" => $numberID
+            return array(
+                "status" => false,
+                "error_type" => $res["error_type"],
+                "content" => $res["content"]
             );
         }
-        return $result;
+        if ($res["status"] === "error") {
+            return array(
+                "status" => false,
+                "error_type" => $res["error_type"],
+                "content" => $res["content"]
+            );
+        }
+
+        $oldBalance = $res["data"]["old_balance"]; // float
+        $newBalance = $res["data"]["new_balance"]; // float
+        $number = $res["data"]["phone"]["number"]; // string
+        $numberID = $res["data"]["phone"]["id"]; // string
+
+        return array(
+            "status" => true,
+            "oldBalance" => $oldBalance,
+            "newBalance" => $newBalance,
+            "number" => $number,
+            "numberID" => $numberID
+        );
     }
 
     public function cancel(array $options): array
     {
-        $result = [];
-
         $numberID = $options["numberID"];
 
         $data = array(
@@ -106,25 +118,32 @@ class DisposableActions
         $res = HttpClient::request("disposable/cancel", $data, "DELETE");
 
         if (!isset($res["status"], $res["data"])) {
-            return $result;
-        }
-        if ($res["status"] === "success") {
-            $oldBalance = $res["data"]["old_balance"]; // float
-            $newBalance = $res["data"]["new_balance"]; // float
-
-            $result = array(
-                "status" => true,
-                "oldBalance" => $oldBalance,
-                "newBalance" => $newBalance
+            return array(
+                "status" => false,
+                "error_type" => $res["error_type"],
+                "content" => $res["content"]
             );
         }
-        return $result;
+        if ($res["status"] === "error") {
+            return array(
+                "status" => false,
+                "error_type" => $res["error_type"],
+                "content" => $res["content"]
+            );
+        }
+
+        $oldBalance = $res["data"]["old_balance"]; // float
+        $newBalance = $res["data"]["new_balance"]; // float
+
+        return array(
+            "status" => true,
+            "oldBalance" => $oldBalance,
+            "newBalance" => $newBalance
+        );
     }
 
     public function update(array $options): array
     {
-        $result = [];
-
         $numberID = $options["numberID"];
 
         $data = array(
@@ -138,27 +157,34 @@ class DisposableActions
         $res = HttpClient::request("disposable/sent", $data, "PUT");
 
         if (!isset($res["status"], $res["data"])) {
-            return $result;
-        }
-        if ($res["status"] === "success") {
-            $oldStatus = $res["data"]["old_status"]; // string
-            $newStatus = $res["data"]["new_status"]; // string
-            $numberID = $res["data"]["id"]; // string
-
-            $result = array(
-                "status" => true,
-                "oldStatus" => $oldStatus,
-                "newStatus" => $newStatus,
-                "numberID" => $numberID
+            return array(
+                "status" => false,
+                "error_type" => $res["error_type"],
+                "content" => $res["content"]
             );
         }
-        return $result;
+        if ($res["status"] === "error") {
+            return array(
+                "status" => false,
+                "error_type" => $res["error_type"],
+                "content" => $res["content"]
+            );
+        }
+
+        $oldStatus = $res["data"]["old_status"]; // string
+        $newStatus = $res["data"]["new_status"]; // string
+        $numberID = $res["data"]["id"]; // string
+
+        return array(
+            "status" => true,
+            "oldStatus" => $oldStatus,
+            "newStatus" => $newStatus,
+            "numberID" => $numberID
+        );
     }
 
     public function check(array $options): array
     {
-        $result = [];
-
         $numberID = $options["numberID"];
 
         $data = array(
@@ -172,18 +198,29 @@ class DisposableActions
         $res = HttpClient::request("disposable/check", $data);
 
         if (!isset($res["status"], $res["data"])) {
-            return $result;
-        }
-        if ($res["status"] === "success") {
-            $sms = $res["data"]["sms"]; // string
-            $numberID = $res["data"]["id"]; // string
-
-            $result = array(
-                "status" => true,
-                "sms" => $sms,
-                "numberID" => $numberID
+            return array(
+                "status" => false,
+                "error_type" => $res["error_type"],
+                "content" => $res["content"]
             );
         }
-        return $result;
+        if ($res["status"] === "error") {
+            return array(
+                "status" => false,
+                "error_type" => $res["error_type"],
+                "content" => $res["content"]
+            );
+        }
+
+
+        $sms = $res["data"]["sms"]; // string
+        $numberID = $res["data"]["id"]; // string
+
+
+        return array(
+            "status" => true,
+            "sms" => $sms,
+            "numberID" => $numberID
+        );
     }
 }
