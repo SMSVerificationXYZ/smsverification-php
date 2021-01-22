@@ -2,12 +2,21 @@
     "name": "smsverification/smsverification-php",
     "description": "SMSVerification PHP library",
     "type": "library",
-    "require": {
-        "php": ">=7.4.0",
-        "ext-curl": "*",
-        "ext-json": "*"
-    },
     "license": "MIT",
+    "require": {
+        "php": ">=7.0.0",
+        "ext-curl": "*",
+        "ext-json": "*",
+        "ext-mbstring": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "SMSVerification\\": ""
+        }
+    },
     "authors": [
         {
             "name": "SMSVerification Team",
