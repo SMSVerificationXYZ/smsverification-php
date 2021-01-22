@@ -17,7 +17,6 @@ class SMSVerification
     private string $password;
 
     private UserActions $userActions;
-
     private DisposableActions $disposableActions;
 
     public function __construct(string $username, string $password)
