@@ -3,3 +3,9 @@ To use our API, you would need a SMSVerification account. You can sign up [here]
 
 ------------
 
+# Requirements
+PHP 7.4 or higher.
+
+------------
+
+# Composer
