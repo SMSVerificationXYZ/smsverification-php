@@ -3,6 +3,8 @@
     "description": "SMSVerification PHP library",
     "type": "library",
     "license": "MIT",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "require": {
         "php": ">=7.0.0",
         "ext-curl": "*",
