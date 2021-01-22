@@ -1,6 +1,8 @@
 {
     "name": "smsverification/smsverification-php",
     "description": "SMSVerification PHP library",
+    "keywords": ["SMS", "SMSVerification", "api"],
+    "homepage": "https://smsverification.xyz/",
     "type": "library",
     "license": "MIT",
     "require": {
