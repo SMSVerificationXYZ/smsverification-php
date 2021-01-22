@@ -9,7 +9,7 @@ PHP 7.4 or higher.
 ------------
 
 # Composer
-You can easily install the libary via Composer. To do so, run the following command-line:
+You can easily install the library via Composer. To do so, run the following command-line: 
 
 `composer require smsverification/smsverification-php`
 
