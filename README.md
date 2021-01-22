@@ -1,5 +1,5 @@
 # SMSVerification PHP library
-To use our API, you would need a SMSVerification account. You can sign up [here](https://smsverification.xyz/register "here") in case you do not have one.
+This is the development branch. In case you are looking to use our API, please head to the main branch as of this branch may not be stable.
 
 ------------
 
