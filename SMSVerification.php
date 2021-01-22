@@ -1,6 +1,5 @@
 <?php
 
-
 namespace SMSVerification;
 
 require_once "Actions/UserActions.php";

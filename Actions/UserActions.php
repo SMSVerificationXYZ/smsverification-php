@@ -1,8 +1,6 @@
 <?php
 
-
 namespace SMSVerification\Actions\UserActions;
-
 
 use SMSVerification\HttpClient\HttpClient;
 
