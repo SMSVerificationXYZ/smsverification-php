@@ -1,6 +1,8 @@
 <?php
 
+
 namespace SMSVerification\Actions\UserActions;
+
 
 use SMSVerification\HttpClient\HttpClient;
 
@@ -17,13 +19,12 @@ class UserActions
     {
         $value = -1;
         $data = array(
-            "auth" => array(
-                "username" => $this->auth["user"],
-                "password" => $this->auth["pass"]
-            )
+            "token" => $this->auth["apiKey"],
+            "data" => []
         );
         $res = HttpClient::request("balance", $data);
         if (!isset($res["status"], $res["data"])) {
+            var_dump($res);
             return $value;
         }
         if ($res["status"] === "success") {

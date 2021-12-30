@@ -1,6 +1,8 @@
 <?php
 
+
 namespace SMSVerification\HttpClient;
+
 
 use SMSVerification\SMSVerification;
 
@@ -10,7 +12,7 @@ class HttpClient
     {
         $root = SMSVerification::getRootUrl();
 
-        $payload = json_encode($data);
+        $payload = json_encode($data["data"]);
         $curl = curl_init();
         curl_setopt_array($curl, [
             CURLOPT_URL => "{$root}{$dest}",
@@ -18,6 +20,7 @@ class HttpClient
             CURLOPT_POSTFIELDS => $payload,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HTTPHEADER => array(
+                'Authentication: ' . $data["token"],
                 'Content-Type: application/json',
                 'Content-Length: ' . strlen($payload)
             )

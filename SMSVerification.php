@@ -1,5 +1,6 @@
 <?php
 
+
 namespace SMSVerification;
 
 require_once "Actions/UserActions.php";
@@ -12,17 +13,15 @@ use SMSVerification\Actions\UserActions\UserActions;
 class SMSVerification
 {
     private const ROOT = "https://smsverification.xyz/api/v2/";
-    private string $username;
-    private string $password;
+    private string $key;
 
     private UserActions $userActions;
     private DisposableActions $disposableActions;
 
-    public function __construct(string $username, string $password)
+    public function __construct(string $key)
     {
         // Auth
-        $this->username = $username;
-        $this->password = $password;
+        $this->key = $key;
 
         // Objects
         $this->userActions = new UserActions($this->getAuthDetails());
@@ -32,8 +31,7 @@ class SMSVerification
     public function getAuthDetails(): array
     {
         return array(
-            "user" => $this->username,
-            "pass" => $this->password
+            "apiKey" => $this->key
         );
     }
 

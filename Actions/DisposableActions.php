@@ -1,6 +1,8 @@
 <?php
 
+
 namespace SMSVerification\Actions\DisposableActions;
+
 
 use SMSVerification\HttpClient\HttpClient;
 
@@ -19,12 +21,10 @@ class DisposableActions
         $service = $options["service"];
 
         $data = array(
-            "auth" => array(
-                "username" => $this->auth["user"],
-                "password" => $this->auth["pass"]
-            ),
-            "country" => $country,
-            "service" => $service
+            "token" => $this->auth["apiKey"],
+            "data" => [
+                "country" => $country,
+                "service" => $service]
         );
 
         $res = HttpClient::request("disposable/price", $data);
@@ -62,12 +62,9 @@ class DisposableActions
         $service = $options["service"];
 
         $data = array(
-            "auth" => array(
-                "username" => $this->auth["user"],
-                "password" => $this->auth["pass"]
-            ),
-            "country" => $country,
-            "service" => $service
+            "token" => $this->auth["apiKey"],
+            "data" => ["country" => $country,
+                "service" => $service]
         );
 
         $res = HttpClient::request("disposable", $data, "POST");
@@ -106,11 +103,8 @@ class DisposableActions
         $numberID = $options["numberID"];
 
         $data = array(
-            "auth" => array(
-                "username" => $this->auth["user"],
-                "password" => $this->auth["pass"]
-            ),
-            "id" => $numberID
+            "token" => $this->auth["apiKey"],
+            "data" => ["id" => $numberID]
         );
 
         $res = HttpClient::request("disposable/cancel", $data, "DELETE");
@@ -145,11 +139,8 @@ class DisposableActions
         $numberID = $options["numberID"];
 
         $data = array(
-            "auth" => array(
-                "username" => $this->auth["user"],
-                "password" => $this->auth["pass"]
-            ),
-            "id" => $numberID
+            "token" => $this->auth["apiKey"],
+            "data" => ["id" => $numberID]
         );
 
         $res = HttpClient::request("disposable/sent", $data, "PUT");
@@ -186,11 +177,8 @@ class DisposableActions
         $numberID = $options["numberID"];
 
         $data = array(
-            "auth" => array(
-                "username" => $this->auth["user"],
-                "password" => $this->auth["pass"]
-            ),
-            "id" => $numberID
+            "token" => $this->auth["apiKey"],
+            "data" => ["id" => $numberID]
         );
 
         $res = HttpClient::request("disposable/check", $data);
