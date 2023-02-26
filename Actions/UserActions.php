@@ -5,31 +5,28 @@ namespace SMSVerification\Actions\UserActions;
 
 
 use SMSVerification\HttpClient\HttpClient;
+use SMSVerification\Misc\Categories;
+use SMSVerification\Misc\ResponseStatus;
 
 class UserActions
 {
-    private array $auth;
-
-    public function __construct(array $auth)
+    /**
+     * Returning current balance of the user.
+     * @return array|float Array for errors, float for balance.
+     */
+    public function getBalance(): array|float
     {
-        $this->auth = $auth;
-    }
-
-    public function getBalance(): float
-    {
-        $value = -1;
-        $data = array(
-            "token" => $this->auth["apiKey"],
-            "data" => []
-        );
-        $res = HttpClient::request("balance", $data);
-        if (!isset($res["status"], $res["data"])) {
-            var_dump($res);
-            return $value;
+        $balance = -1;
+        $res = HttpClient::request(Categories::USER, "/balance");
+        if (!isset($res["status"])) {
+            return $balance;
         }
-        if ($res["status"] === "success") {
-            $value = $res["data"]["balance"];
+        if ($res["status"] === ResponseStatus::ERROR) {
+            HttpClient::handleError($res);
         }
-        return $value;
+        if (isset($res["data"]["balance"])) {
+            $balance = $res["data"]["balance"];
+        }
+        return $balance;
     }
 }

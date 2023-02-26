@@ -5,208 +5,102 @@ namespace SMSVerification\Actions\DisposableActions;
 
 
 use SMSVerification\HttpClient\HttpClient;
+use SMSVerification\Misc\Categories;
+use SMSVerification\Misc\ResponseStatus;
 
 class DisposableActions
 {
-    private array $auth;
-
-    public function __construct(array $auth)
+    public function getPrice(string $country, string $service): ?array
     {
-        $this->auth = $auth;
+        $res = HttpClient::request(Categories::DISPOSABLE,
+            "/price/{$country}/{$service}");
+        if (!isset($res["status"])) {
+            return null;
+        }
+        if ($res["status"] === ResponseStatus::ERROR) {
+            HttpClient::handleError($res);
+        }
+        if (!isset($res["data"]["phone"]["price"])) {
+            return null;
+        }
+        return [
+            "country" => $res["data"]["country"],
+            "service" => $res["data"]["service"],
+            "price" => $res["data"]["phone"]["price"]
+        ];
     }
-
-    public function getPrice(array $options): array
-    {
-        $country = $options["country"];
-        $service = $options["service"];
-
-        $data = array(
-            "token" => $this->auth["apiKey"],
-            "data" => [
-                "country" => $country,
-                "service" => $service]
-        );
-
-        $res = HttpClient::request("disposable/price", $data);
-
-        if (!isset($res["status"], $res["data"])) {
-            return array(
-                "status" => false,
-                "error_type" => $res["error_type"],
-                "content" => $res["content"]
-            );
+    public function order(string $country, string $service): ?array {
+        $res = HttpClient::request(Categories::DISPOSABLE,
+            "",
+            ["data" => ["country" => $country,
+                "service" => $service]],
+            "POST");
+        if (!isset($res["status"])) {
+            return null;
         }
-        if ($res["status"] === "error") {
-            return array(
-                "status" => false,
-                "error_type" => $res["error_type"],
-                "content" => $res["content"]
-            );
+        if ($res["status"] === ResponseStatus::ERROR) {
+            HttpClient::handleError($res);
         }
-
-        $resCountry = $res["data"]["country"];
-        $resService = $res["data"]["service"];
-        $price = $res["data"]["phone"]["price"];
-
-        return array(
-            "status" => true,
-            "country" => $resCountry,
-            "service" => $resService,
-            "price" => $price
-        );
+        if (!isset($res["data"]["phone"]["number"])) {
+            return null;
+        }
+        return [
+            "old_balance" => $res["data"]["old_balance"],
+            "new_balance" => $res["data"]["new_balance"],
+            "phone" => [
+                "number" => $res["data"]["phone"]["number"],
+                "id" => $res["data"]["phone"]["id"],
+                "price" => $res["data"]["phone"]["price"]
+            ]
+        ];
     }
-
-    public function order(array $options): array
-    {
-        $country = $options["country"];
-        $service = $options["service"];
-
-        $data = array(
-            "token" => $this->auth["apiKey"],
-            "data" => ["country" => $country,
-                "service" => $service]
-        );
-
-        $res = HttpClient::request("disposable", $data, "POST");
-
-        if (!isset($res["status"], $res["data"])) {
-            return array(
-                "status" => false,
-                "error_type" => $res["error_type"],
-                "content" => $res["content"]
-            );
+    public function sent(string $numberId): ?array {
+        $res = HttpClient::request(Categories::DISPOSABLE, "/sent/{$numberId}", [], "PUT");
+        if (!isset($res["status"])) {
+            return null;
         }
-        if ($res["status"] === "error") {
-            return array(
-                "status" => false,
-                "error_type" => $res["error_type"],
-                "content" => $res["content"]
-            );
+        if ($res["status"] === ResponseStatus::ERROR) {
+            HttpClient::handleError($res);
         }
-
-        $oldBalance = $res["data"]["old_balance"]; // float
-        $newBalance = $res["data"]["new_balance"]; // float
-        $number = $res["data"]["phone"]["number"]; // string
-        $numberID = $res["data"]["phone"]["id"]; // string
-
-        return array(
-            "status" => true,
-            "oldBalance" => $oldBalance,
-            "newBalance" => $newBalance,
-            "number" => $number,
-            "numberID" => $numberID
-        );
+        if (!isset($res["data"]["new_status"])) {
+            return null;
+        }
+        return [
+            "old_status" => $res["data"]["old_status"],
+            "new_status" => $res["data"]["new_status"],
+            "number_id" => $res["data"]["id"]
+        ];
     }
-
-    public function cancel(array $options): array
-    {
-        $numberID = $options["numberID"];
-
-        $data = array(
-            "token" => $this->auth["apiKey"],
-            "data" => ["id" => $numberID]
-        );
-
-        $res = HttpClient::request("disposable/cancel", $data, "DELETE");
-
-        if (!isset($res["status"], $res["data"])) {
-            return array(
-                "status" => false,
-                "error_type" => $res["error_type"],
-                "content" => $res["content"]
-            );
+    public function check(string $numberId): ?array {
+        $res = HttpClient::request(Categories::DISPOSABLE, "/check/{$numberId}");
+        if (!isset($res["status"])) {
+            return null;
         }
-        if ($res["status"] === "error") {
-            return array(
-                "status" => false,
-                "error_type" => $res["error_type"],
-                "content" => $res["content"]
-            );
+        if ($res["status"] === ResponseStatus::ERROR) {
+            HttpClient::handleError($res);
         }
-
-        $oldBalance = $res["data"]["old_balance"]; // float
-        $newBalance = $res["data"]["new_balance"]; // float
-
-        return array(
-            "status" => true,
-            "oldBalance" => $oldBalance,
-            "newBalance" => $newBalance
-        );
+        if (!isset($res["data"]["sms"])) {
+            return null;
+        }
+        return [
+            "number_id" => $res["data"]["id"],
+            "sms" => $res["data"]["sms"]
+        ];
     }
-
-    public function update(array $options): array
-    {
-        $numberID = $options["numberID"];
-
-        $data = array(
-            "token" => $this->auth["apiKey"],
-            "data" => ["id" => $numberID]
-        );
-
-        $res = HttpClient::request("disposable/sent", $data, "PUT");
-
-        if (!isset($res["status"], $res["data"])) {
-            return array(
-                "status" => false,
-                "error_type" => $res["error_type"],
-                "content" => $res["content"]
-            );
+    public function cancel(string $numberId): ?array {
+        $res = HttpClient::request(Categories::DISPOSABLE, "/cancel/{$numberId}", [], "DELETE");
+        if (!isset($res["status"])) {
+            return null;
         }
-        if ($res["status"] === "error") {
-            return array(
-                "status" => false,
-                "error_type" => $res["error_type"],
-                "content" => $res["content"]
-            );
+        if ($res["status"] === ResponseStatus::ERROR) {
+            HttpClient::handleError($res);
         }
-
-        $oldStatus = $res["data"]["old_status"]; // string
-        $newStatus = $res["data"]["new_status"]; // string
-        $numberID = $res["data"]["id"]; // string
-
-        return array(
-            "status" => true,
-            "oldStatus" => $oldStatus,
-            "newStatus" => $newStatus,
-            "numberID" => $numberID
-        );
-    }
-
-    public function check(array $options): array
-    {
-        $numberID = $options["numberID"];
-
-        $data = array(
-            "token" => $this->auth["apiKey"],
-            "data" => ["id" => $numberID]
-        );
-
-        $res = HttpClient::request("disposable/check", $data);
-
-        if (!isset($res["status"], $res["data"])) {
-            return array(
-                "status" => false,
-                "error_type" => $res["error_type"],
-                "content" => $res["content"]
-            );
+        if (!isset($res["data"]["new_balance"])) {
+            return null;
         }
-        if ($res["status"] === "error") {
-            return array(
-                "status" => false,
-                "error_type" => $res["error_type"],
-                "content" => $res["content"]
-            );
-        }
-
-
-        $sms = $res["data"]["sms"]; // string
-        $numberID = $res["data"]["id"]; // string
-
-
-        return array(
-            "status" => true,
-            "sms" => $sms,
-            "numberID" => $numberID
-        );
+        return [
+            "old_balance" => $res["data"]["old_balance"],
+            "new_balance" => $res["data"]["new_balance"]
+        ];
     }
 }

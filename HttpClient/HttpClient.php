@@ -8,19 +8,26 @@ use SMSVerification\SMSVerification;
 
 class HttpClient
 {
-    public static function request(string $dest, array $data, string $method = "GET"): array
+    private static string $token;
+
+    public static function init(string $token): void
+    {
+        self::$token = $token;
+    }
+
+    public static function request(string $category, string $dest, array $data = [], string $method = "GET"): array
     {
         $root = SMSVerification::getRootUrl();
 
         $payload = json_encode($data["data"]);
         $curl = curl_init();
         curl_setopt_array($curl, [
-            CURLOPT_URL => "{$root}{$dest}",
+            CURLOPT_URL => "{$root}{$category}{$dest}",
             CURLOPT_CUSTOMREQUEST => $method,
             CURLOPT_POSTFIELDS => $payload,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HTTPHEADER => array(
-                'Authentication: ' . $data["token"],
+                'Authentication: ' . self::$token,
                 'Content-Type: application/json',
                 'Content-Length: ' . strlen($payload)
             )
@@ -29,5 +36,14 @@ class HttpClient
         curl_close($curl);
 
         return json_decode($response, true);
+    }
+
+    public static function handleError(array $response): array
+    {
+        return [
+            "status" => false,
+            "error" => $response["error_type"],
+            "content" => $response["content"]
+        ];
     }
 }
